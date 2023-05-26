@@ -27,8 +27,12 @@ export const resolvers = {
     jobs: () => getJobs(),
   },
   Mutation: {
-    createJob: (_root, { input: { title, description } }) => {
-      const companyId = "FjcJCHJALA4i";
+    createJob: (_root, { input: { title, description } }, { user }) => {
+      console.log("[create job] context:", user);
+      if (!user) {
+        throw unauthorizedError("Missing authentication");
+      }
+      const { companyId } = user;
       return createJob({ companyId, title, description });
     },
     deleteJob: (__root, { id }) => deleteJob(id),
@@ -49,7 +53,11 @@ function notFoundError(message) {
     extensions: { code: "NOT FOUND" },
   });
 }
-
+function unauthorizedError(message) {
+  throw new GraphQLError(message, {
+    extensions: { code: "UNAUTHORIZED" },
+  });
+}
 function toIsoDate(value) {
   return value.slice(0, "yyyy-mm-dd".length);
 }
