@@ -34,13 +34,27 @@ export const companyByIdQuery = gql`
     }
   }
 `;
-const jobByIdquery = gql`
+export const jobByIdQuery = gql`
   query JobById($id: ID!) {
     job(id: $id) {
       ...JobDetail
     }
   }
   ${jobDetailFragment}
+`;
+
+export const jobsQuery = gql`
+  query Jobs {
+    jobs {
+      id
+      date
+      title
+      company {
+        id
+        name
+      }
+    }
+  }
 `;
 
 const httpLink = createHttpLink({ uri: "http://localhost:9000/graphql" });
@@ -77,7 +91,7 @@ export async function createJob({ title, description }) {
     variables: { input: { title, description } },
     update: (cache, { data }) => {
       cache.writeQuery({
-        query: jobByIdquery,
+        query: jobByIdQuery,
         variables: {
           id: data.job.id,
         },
@@ -113,33 +127,33 @@ export async function createJob({ title, description }) {
 //   return company;
 // }
 
-export async function getJob(id) {
-  // const { job } = await client.request(query, { id });
-  const {
-    data: { job },
-  } = await apolloClient.query({ query: jobByIdquery, variables: { id } });
-  console.log(job);
-  return job;
-}
+// export async function getJob(id) {
+//   // const { job } = await client.request(query, { id });
+//   const {
+//     data: { job },
+//   } = await apolloClient.query({ query: jobByIdquery, variables: { id } });
+//   console.log(job);
+//   return job;
+// }
 
-export async function getJobs() {
-  const query = gql`
-    query Jobs {
-      jobs {
-        id
-        date
-        title
-        company {
-          id
-          name
-        }
-      }
-    }
-  `;
-  // const { jobs } = await client.request(query);
-  const { data } = await apolloClient.query({
-    query,
-    fetchPolicy: "network-only",
-  });
-  return data.jobs;
-}
+// export async function getJobs() {
+//   const query = gql`
+//     query Jobs {
+//       jobs {
+//         id
+//         date
+//         title
+//         company {
+//           id
+//           name
+//         }
+//       }
+//     }
+//   `;
+//   // const { jobs } = await client.request(query);
+//   const { data } = await apolloClient.query({
+//     query,
+//     fetchPolicy: "network-only",
+//   });
+//   return data.jobs;
+// }
