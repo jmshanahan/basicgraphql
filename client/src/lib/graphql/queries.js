@@ -20,7 +20,20 @@ const jobDetailFragment = gql`
     description
   }
 `;
-
+export const companyByIdQuery = gql`
+  query CompanyById($id: ID!) {
+    company(id: $id) {
+      id
+      name
+      description
+      jobs {
+        id
+        date
+        title
+      }
+    }
+  }
+`;
 const jobByIdquery = gql`
   query JobById($id: ID!) {
     job(id: $id) {
@@ -43,7 +56,7 @@ const authLink = new ApolloLink((operation, forward) => {
   console.log(`[custom] operation`, operation);
   return forward(operation);
 });
-const apolloClient = new ApolloClient({
+export const apolloClient = new ApolloClient({
   link: concat(authLink, httpLink),
   cache: new InMemoryCache(),
 });
@@ -75,29 +88,30 @@ export async function createJob({ title, description }) {
   return job;
 }
 
-export async function getCompany(id) {
-  const query = gql`
-    query CompanyById($id: ID!) {
-      company(id: $id) {
-        id
-        name
-        description
-        jobs {
-          id
-          date
-          title
-        }
-      }
-    }
-  `;
-  // const { company } = await client.request(query, { id });
-  // return company;
-  const {
-    data: { company },
-  } = await apolloClient.query({ query, variables: { id } });
-  console.log(company);
-  return company;
-}
+// Not needed now that we are using apollo useQuery
+// export async function getCompany(id) {
+//   const query = gql`
+//     query CompanyById($id: ID!) {
+//       company(id: $id) {
+//         id
+//         name
+//         description
+//         jobs {
+//           id
+//           date
+//           title
+//         }
+//       }
+//     }
+//   `;
+//   // const { company } = await client.request(query, { id });
+//   // return company;
+//   const {
+//     data: { company },
+//   } = await apolloClient.query({ query, variables: { id } });
+//   console.log(company);
+//   return company;
+// }
 
 export async function getJob(id) {
   // const { job } = await client.request(query, { id });
