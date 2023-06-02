@@ -21,7 +21,7 @@ async function getContext({ req }) {
   const companyLoader = createCompanyLoader();
   const context = { companyLoader };
 
-  console.log("[getContext] req.auth", req.auth);
+  // console.log("[getContext] req.auth", req.auth);
   if (req.auth) {
     const user = await getUser(req.auth.sub);
     context.user = user;
